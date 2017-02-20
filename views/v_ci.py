@@ -69,4 +69,4 @@ def ci_cis():
     print(username)
     if username is None:
         return jsonify({'code': 1, 'content': '用户姓名错误!'})
-    return jsonify({'code': 1, 'content': u'登陆成功，用户名' + str(username)})
+    return jsonify({'code': 1, 'content': '登陆成功，用户名' + str(username)})
