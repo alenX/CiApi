@@ -4,9 +4,10 @@ from models.model_user import User, Ci
 import hashlib
 import datetime
 from ext import ci_redis, db as my_db
+from ci_decorate import login_require
 
 app = Flask(__name__)
-ci_v = Blueprint('ci', __name__, template_folder='templates')
+ci_v = Blueprint('ci', __name__, template_folder='templates',url_prefix='/v1')
 
 
 @ci_v.route('/ci/login', methods=['POST'])
@@ -55,16 +56,17 @@ def register_view():
 
 
 @ci_v.route('/ci/cis', methods=['GET'])
+@login_require
 def ci_cis():
-    if 'TOKEN' not in request.headers:
-        return jsonify({'code': 0, 'content': '需要验证用户信息'})
+    # if 'TOKEN' not in request.headers:
+    #     return jsonify({'code': 0, 'content': '需要验证用户信息'})
     token = request.headers['token']
-    print(token)
-    if not token:
-        return jsonify({'code': 0, 'content': '需要验证用户信息'})
+    # print(token)
+    # if not token:
+    #     return jsonify({'code': 0, 'content': '需要验证用户信息'})
     mobile = ci_redis.get('token:%s' % token)
-    if not mobile and token != ci_redis.hget('user:%s' % int(mobile), 'token'):
-        return jsonify({'code': 0, 'content': '验证信息错误!'})
+    # if not mobile and token != ci_redis.hget('user:%s' % int(mobile), 'token'):
+    #     return jsonify({'code': 0, 'content': '验证信息错误!'})
     username = ci_redis.hget('user:%s' % int(mobile), 'username')
     print(username)
     if username is None:
@@ -72,15 +74,16 @@ def ci_cis():
     return jsonify({'code': 1, 'content': '登陆成功，用户名' + str(username)})
 
 
-@ci_v.route('/ci/<int:id>')
-def ci_ci(id):
+@ci_v.route('/ci/<int:ci_id>')
+@login_require
+def ci_ci(ci_id):
     # cis = [{'id': 1, 'title': '定风波', 'author': '苏轼'}, {'id': 2, 'title': '卜算子', 'author': '陆游'}]
     # try:
     #     ci = filter(lambda x: x['id'] == id, cis)
     #     return jsonify(next(ci))
     # except StopIteration as e:
     #     return jsonify({'code': 0, 'content': '不存在该记录'})
-    ci = Ci.query.filter_by(id=id).first()
+    ci = Ci.query.filter_by(id=ci_id).first()
     if not ci or Ci is None:
         return jsonify({'code': 0, 'content': '不存在该记录'})
     else:
