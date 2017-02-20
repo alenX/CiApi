@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, Blueprint, request, jsonify, render_template
 from models.model_user import User
-import hashlib, datetime
+import hashlib
+import datetime
 from ext import ci_redis, db as my_db
 
 app = Flask(__name__)
@@ -28,7 +29,7 @@ def login():
         token = m.hexdigest()
         ci_redis.hmset('user:%s' % user.mobile, {'token': token, 'username': username})
         ci_redis.set('token:%s' % token, user.mobile)
-        ci_redis.expire('token:%s' % token, 3600)
+        # ci_redis.expire('token:%s' % token, 3600)
         return jsonify({'code': 1, 'content': '登陆成功', 'mobile': user.mobile})
     else:
         return render_template('ci/index.html')
