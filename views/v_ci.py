@@ -70,3 +70,15 @@ def ci_cis():
     if username is None:
         return jsonify({'code': 1, 'content': '用户姓名错误!'})
     return jsonify({'code': 1, 'content': '登陆成功，用户名' + str(username)})
+
+
+cis = [{'id': 1, 'title': '定风波', 'author': '苏轼'}, {'id': 2, 'title': '卜算子', 'author': '陆游'}]
+
+
+@ci_v.route('/ci/<int:id>')
+def ci_ci(id):
+    try:
+        ci = filter(lambda x: x['id'] == id, cis)
+        return jsonify(next(ci))
+    except StopIteration as e:
+        return jsonify({'code': 0, 'content': '不存在该记录'})
