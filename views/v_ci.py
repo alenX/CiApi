@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, Blueprint, request, jsonify, render_template
-from models.model_user import User
+from models.model_user import User, Ci
 import hashlib
 import datetime
 from ext import ci_redis, db as my_db
@@ -74,11 +74,22 @@ def ci_cis():
 
 cis = [{'id': 1, 'title': '定风波', 'author': '苏轼'}, {'id': 2, 'title': '卜算子', 'author': '陆游'}]
 
+import json
+
 
 @ci_v.route('/ci/<int:id>')
 def ci_ci(id):
-    try:
-        ci = filter(lambda x: x['id'] == id, cis)
-        return jsonify(next(ci))
-    except StopIteration as e:
+    # try:
+    #     ci = filter(lambda x: x['id'] == id, cis)
+    #     return jsonify(next(ci))
+    # except StopIteration as e:
+    #     return jsonify({'code': 0, 'content': '不存在该记录'})
+    ci = Ci.query.filter_by(id=id).first()
+    if not ci or Ci is None:
         return jsonify({'code': 0, 'content': '不存在该记录'})
+    else:
+        ci_dict = ci.__dict__
+        ci_dict.pop('_sa_instance_state')
+        for key, value in ci.__dict__.items():
+            print(key)
+        return json.dumps(ci_dict)

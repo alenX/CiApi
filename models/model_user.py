@@ -25,3 +25,11 @@ class User(my_db.Model):
     def check_password_hash(self, password):
         return check_password_hash(self.password, password)
 
+
+class Ci(my_db.Model):
+    __tablename__ = 'ci_ci'
+    id = my_db.Column(my_db.Integer, primary_key=True)
+    ci_name = my_db.Column(my_db.String(64))
+    ci_title = my_db.Column(my_db.String(256))
+    ci_author = my_db.Column(my_db.String(64))
+    ci_content = my_db.Column(my_db.Text)
