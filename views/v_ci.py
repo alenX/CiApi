@@ -72,13 +72,9 @@ def ci_cis():
     return jsonify({'code': 1, 'content': '登陆成功，用户名' + str(username)})
 
 
-cis = [{'id': 1, 'title': '定风波', 'author': '苏轼'}, {'id': 2, 'title': '卜算子', 'author': '陆游'}]
-
-import json
-
-
 @ci_v.route('/ci/<int:id>')
 def ci_ci(id):
+    # cis = [{'id': 1, 'title': '定风波', 'author': '苏轼'}, {'id': 2, 'title': '卜算子', 'author': '陆游'}]
     # try:
     #     ci = filter(lambda x: x['id'] == id, cis)
     #     return jsonify(next(ci))
@@ -92,4 +88,4 @@ def ci_ci(id):
         ci_dict.pop('_sa_instance_state')
         for key, value in ci.__dict__.items():
             print(key)
-        return json.dumps(ci_dict)
+        return jsonify(ci_dict)
